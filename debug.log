@@ -1,0 +1,4 @@
+[0214/212729.517:ERROR:directory_reader_win.cc(43)] FindFirstFile: Системе не удается найти указанный путь. (0x3)
+[0216/224744.809:ERROR:directory_reader_win.cc(43)] FindFirstFile: Системе не удается найти указанный путь. (0x3)
+[0217/195424.869:ERROR:process_info.cc(329)] VirtualQueryEx: Отказано в доступе. (0x5)
+[0217/195425.146:ERROR:process_info.cc(556)] ReadMemoryInfo failed
