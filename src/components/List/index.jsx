@@ -12,11 +12,14 @@ const List = ({ items, onClick, isRemovable, onRemove, onClickItem, activeItem }
 
    const removeList = (item) => {
       if (window.confirm('Внатуре? Удаляешь? Не ожидал от тебя такого...')) {
-         axios
-            .delete('http://localhost:3001/lists/' + item.id)
-            .then(() => {
-               onRemove(item.id)
-            });
+         // Для сервера
+         // axios
+         //    .delete('http://localhost:3001/lists/' + item.id)
+         //    .then(() => {
+         //       onRemove(item.id)
+         //    });
+         // Для localStorage
+         onRemove(item.id)
       }
    }
    return (

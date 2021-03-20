@@ -30,60 +30,56 @@ const AddList = ({ colors, onAdd, listLocal, arr }) => {
          alert('Мудила, название напиши')
          return;
       }
-
       // Для localStorage
-      // let colorsLocal = arr.colors
-      // listLocal.push({
-      //    "name": inputValue,
-      //    "colorId": selectedColor,
-      //    "id": listLocal.length + 1,
-      //    "tasks": [],
-      //    "color": {}
-      // })
-      //    // Для localStorage:
-      // const color = colorsLocal.filter(c => c.id === selectedColor)[0].name;
-      // let hex = colorsLocal.map(item =>{
-      //    if(item.id == listLocal[listLocal.length - 1].colorId){
-      //       listLocal[listLocal.length - 1].color = {
-      //          'name': color,
-      //          'hex': item.hex
-      //       }
-      //    }
-      // })
-      // onAdd(arr.lists[arr.lists.length - 1]);
-      // localStorage.clear()
-      // localStorage.setItem('db1', JSON.stringify(arr.lists))
-      // onClose();
+      let colorsLocal = arr.colors
+      listLocal.push({
+         "name": inputValue,
+         "colorId": selectedColor,
+         "id": Math.random(),
+         "tasks": [],
+         "color": {}
+      })
+      const color = colorsLocal.filter(c => c.id === selectedColor)[0].name;
+      let hex = colorsLocal.map(item =>{
+         if(item.id == listLocal[listLocal.length - 1].colorId){
+            listLocal[listLocal.length - 1].color = {
+               'name': color,
+               'hex': item.hex
+            }
+         }
+      })
+      onAdd(arr.lists[arr.lists.length - 1]);
+      onClose();
 
       // Для сервера
-      setIsLoading(true);
-      axios
-         .post('http://localhost:3001/lists',{
-         "name": inputValue,
-         "colorId": selectedColor
-         })
-         .then(
-            ({ data }) => {
-               const color = colors.filter(c => c.id === selectedColor)[0].name;
-               let hex = null
-               const chooseHex = colors.map(item=>{
-                  // console.log(data);
-                  if(item.id === data.colorId){
-                     hex = item.hex
-                  }
-                  return item
-               })
-               const listObj = { ...data, color: { name: color, hex: hex }, tasks:[]};
-               onAdd(listObj);
-               onClose();
-               // console.log(listObj)
-         })
-         .catch(() => {
-            alert('Произошла ошибка при добавлении списка!')
-         })
-         .finally(() => {
-            setIsLoading(false);
-         });
+      // setIsLoading(true);
+      // axios
+      //    .post('http://localhost:3001/lists',{
+      //    "name": inputValue,
+      //    "colorId": selectedColor
+      //    })
+      //    .then(
+      //       ({ data }) => {
+      //          const color = colors.filter(c => c.id === selectedColor)[0].name;
+      //          let hex = null
+      //          const chooseHex = colors.map(item=>{
+      //             // console.log(data);
+      //             if(item.id === data.colorId){
+      //                hex = item.hex
+      //             }
+      //             return item
+      //          })
+      //          const listObj = { ...data, color: { name: color, hex: hex }, tasks:[]};
+      //          onAdd(listObj);
+      //          onClose();
+      //          // console.log(listObj)
+      //    })
+      //    .catch(() => {
+      //       alert('Произошла ошибка при добавлении списка!')
+      //    })
+      //    .finally(() => {
+      //       setIsLoading(false);
+      //    });
       };
       
       
@@ -118,7 +114,7 @@ const AddList = ({ colors, onAdd, listLocal, arr }) => {
                placeholder='Название списка'>
             </input>
             <div className='add-list__popup-colors'>
-               {colors.map(color =>(
+               {colors && colors.map(color =>(
                <Badge 
                   onClick={()=> selectColor(color.id)} 
                   key={color.id} 

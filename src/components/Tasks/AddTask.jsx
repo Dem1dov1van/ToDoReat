@@ -19,29 +19,30 @@ export default function AddTask({ list, onAddTask }) {
       if (!inputValue) {
          alert('Введите название задачи')
       } else {
-         setIsLoading(true)
          const taskObj = {
             "listId": list.id,
             "text": inputValue,
             compleated: false
          }
-         axios
-            .post('http://localhost:3001/tasks', taskObj).then(({ data }) => {
-               onAddTask(list.id, data)
-               setAddFormVisible(!addFormVisible)
-               setInputValue('')
-            }).catch(() => {
-               alert('Произошла ошибка при добавлении задачи!')
-            }).finally(() => {
-               setIsLoading(false)
-            });
-
+         // Для 
+         // setIsLoading(true)
+         // axios
+         //    .post('http://localhost:3001/tasks', taskObj).then(({ data }) => {
+         //       onAddTask(list.id, data)
+         //       setAddFormVisible(!addFormVisible)
+         //       setInputValue('')
+         //    }).catch(() => {
+         //       alert('Произошла ошибка при добавлении задачи!')
+         //    }).finally(() => {
+         //       setIsLoading(false)
+         //    });
+         // Для localStorage
+         onAddTask(list.id, taskObj)
+         setAddFormVisible(!addFormVisible)
+         setInputValue('')
       }
    }
 
-   // const setInputValue = () =>{
-
-   // }
 
    return (
       <div className='tasks__add add'>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, Component } from 'react';
 import axios from 'axios';
 import { Route, useHistory, useLocation } from 'react-router-dom';
 import db from './assettes/db.json'
+// import db1 from './assettes/db1.json'
 
 import { List, Tasks, AddList } from './components'
 
@@ -15,13 +16,6 @@ import { List, Tasks, AddList } from './components'
 
 
 function App() {
-  //Для localStorage:
-  // localStorage.setItem('db',JSON.stringify(db))
-  // const items = localStorage.getItem('db')
-  // const qwe = localStorage.getItem('db1')
-  // console.log(qwe);
-  // const arr = JSON.parse(items)
-  // const asd = arr.lists
 
 
   const [lists, setLists] = useState(null);
@@ -29,76 +23,112 @@ function App() {
   const [activeItem, setActiveItem] = useState(null);
   let history = useHistory()
   let location = useLocation()
+  var arr1 = 1
+
+  //Для localStorage
+
+  localStorage.clear()
+  const items1 = localStorage.getItem('db1')
+  localStorage.setItem('db',JSON.stringify(db))
+  const items = localStorage.getItem('db')
+  const arr = JSON.parse(items)
 
       // Для localStorage:
   
-  // const embed = (lists, tasks) => {
-  //   lists.map(item => {
-  //     item.tasks = []
-  //     tasks.map(task => {
-  //       if(task.listId == item.id){
-  //         item.tasks.push(task)
-  //       }
-  //       return tasks
-  //     })
-  //     return item
-  //   })
-  // }
+  const embed = (lists, tasks) => {
+    // console.log(lists);
+    // console.log(tasks);
+    lists.map(item => {
+      item.tasks = []
+      tasks.map(task => {
+        if(task.listId == item.id){
+          item.tasks.push(task)
+        }
+        return tasks
+      })
+      return item
+    })
+  }
   
-  // const embedAll = (lists, colors) => {
-  //   lists.map(item => {
-  //     colors.map(color => {
-  //       if(color.id == item.colorId){
-  //         item.color = color
-  //       }
-  //       return color
-  //     })
-  //     return item
-  //   })
-  // }
+  const embedAll = (lists, colors) => {
+    lists.map(item => {
+      colors.map(color => {
+        if(color.id == item.colorId){
+          item.color = color
+        }
+        return color
+      })
+      return item
+    })
+  }
 
-  // embed(arr.lists, arr.tasks)
-  // embedAll(arr.lists, arr.colors)
-
-
+  embed(arr.lists, arr.tasks)
+  embedAll(arr.lists, arr.colors)
 
   useEffect(() => {
     // Для сервера:
-    axios
-      .get('http://localhost:3001/lists?_expand=color&_embed=tasks')
-      .then(({ data }) => {
-        setLists(data);
-      });
+    // axios
+    //   .get('http://localhost:3001/lists?_expand=color&_embed=tasks')
+    //   .then(({ data }) => {
+    //     setLists(data);
+    //     console.log(data);
+    //   });
       
-    axios.get('http://localhost:3001/colors').then(({ data }) => {
-      setColors(data);
-    })
+    // axios.get('http://localhost:3001/colors').then(({ data }) => {
+    //   setColors(data);
+    // })
+
     // Для localStorage:
+    if(items1){
+      var arr1 = JSON.parse(items1)
+      embed(arr1.lists, arr1.tasks)
+      embedAll(arr1.lists, arr1.colors)
+      setLists(arr1.lists);
+      setColors(arr.colors);
+      return arr1
+    }else{
+        // Для сервера:
+        setLists(arr.lists);
+        setColors(arr.colors);
+    }
     // setLists(arr.lists);
     // setColors(arr.colors);
   }, []);
 
-  // useEffect(() => {
-  //   setLists(arr.lists)
-  //   console.log('заработало');
-  //   localStorage.clear()
-  // },[localStorage])
 
-  // localStorage.setItem('123', qwe)
 
   const onAddList = obj => {
+
     const newLists = [...lists, obj];
+    let db1 = {'lists': newLists, 'tasks': arr.tasks, 'colors': arr.colors}
+    localStorage.setItem('db1',JSON.stringify(db1))
     setLists(newLists);
   }
 
   const onAddTask = (listId, taskObj) => {
-    const newList = lists.map(item => {
-      if (item.id === listId) {
-        item.tasks = [...item.tasks, taskObj]
-      }
-      return item;
-    });
-    setLists(newList);
+    if(items1){
+      arr1 = JSON.parse(items1)
+      const newList = arr1.lists.map(item => {
+        if (item.id === listId) {
+          console.log(item)
+          console.log(taskObj)
+          item.tasks = [...item.tasks, taskObj]
+          console.log(item.tasks)
+        }
+        return item;
+      });
+      let db1 = {'lists': newList, 'tasks': arr.tasks, 'colors': arr.colors}
+      localStorage.setItem('db1',JSON.stringify(db1))
+      setLists(newList);
+    }else{
+      const newList = arr.lists.map(item => {
+        if (item.id === listId) {
+          item.tasks = [...item.tasks, taskObj]
+        }
+        return item;
+      });
+      // setLists(newList);
+    }
   }
 
   const onEditListTitle = (id, title) => {
@@ -206,8 +236,20 @@ function App() {
         <List
           items={lists}
           onRemove={id => {
-            const newLists = lists.filter(item => item.id !== id);
-            setLists(newLists)
+            // Для localStorage
+            if(items1){
+              arr1 = JSON.parse(items1)
+              const newLists = arr1.lists.filter(item => item.id !== id)
+              let db1 = {'lists': newLists, 'tasks': arr.tasks, 'colors': arr.colors}
+              localStorage.setItem('db1',JSON.stringify(db1))
+              setLists(newLists);
+            }else{
+              const newLists = arr.lists.filter(item => item.id !== id)
+              setLists(newLists)
+            }
+            //Для сервера
+            // const newLists = lists.filter(item => item.id !== id);
+            // setLists(newLists)
           }}
           onClickItem={list => {
             history.push(`/lists/${list.id}`)
@@ -220,8 +262,8 @@ function App() {
         )}
       <AddList
       // Для localStorage
-        // arr = {arr}
-        // listLocal={arr.lists}
+        arr = {arr}
+        listLocal={arr.lists}
         // Для Сервера
         colors={colors}
         //
