@@ -62,46 +62,40 @@
       "completed": false
     },
     {
-      "listId": 2,
-      "text": "123",
-      "completed": true,
-      "id": 5
-    },
-    {
       "listId": 1,
       "text": "test",
       "completed": false,
-      "id": 6
-    },
-    {
-      "listId": 1,
-      "text": "qweqwe",
-      "completed": false,
-      "id": 7
-    },
-    {
-      "listId": 1,
-      "text": "qweqwe",
-      "completed": true,
-      "id": 8
-    },
-    {
-      "listId": 1,
-      "text": "123",
-      "completed": false,
-      "id": 9
+      "id": 5
     },
     {
       "listId": 4,
       "text": "Купить 1984!",
       "completed": true,
-      "id": 10
+      "id": 6
     },
     {
-      "listId": 2,
-      "text": "222",
+      "listId": 3,
+      "text": "The Witcher",
+      "completed": false,
+      "id": 7
+    },
+    {
+      "listId": 3,
+      "text": "Любовь и голуби",
       "completed": true,
-      "id": 12
+      "id": 8
+    },
+    {
+      "listId": 3,
+      "text": "Том и Джерри",
+      "completed": true,
+      "id": 9
+    },
+    {
+      "listId": 6,
+      "text": "Победить Саню в литрбол",
+      "completed": true,
+      "id": 10
     },
     {
       "listId": 7,
@@ -120,6 +114,12 @@
       "text": "Сделали удаление и редактирование задач и списков",
       "completed": true,
       "id": 17
+    },
+    {
+      "listId": 7,
+      "text": "ArchakovBlog, от души за этот курс",
+      "completed": true,
+      "id": 18
     }
   ],
   "colors": [

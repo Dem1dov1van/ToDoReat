@@ -36,6 +36,7 @@ export default function Task({ id, text, list, completed, onEdit, onRemove, onCo
                   />
                </div>
                <div className='item__remove' onClick={() => {onRemove(list.id, id)}}>
+                  
                   <img 
                      src={RemoveSvg} 
                      alt="Cross icon"

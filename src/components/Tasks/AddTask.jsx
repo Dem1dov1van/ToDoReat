@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import AddSvg from '../../assettes/img/add.svg'
 
-export default function AddTask({ list, onAddTask }) {
+export default function AddTask({ list, onAddTask, arr, items1 }) {
 
    const [addFormVisible, setAddFormVisible] = useState(false)
    const [inputValue, setInputValue] = useState('')
@@ -15,16 +15,26 @@ export default function AddTask({ list, onAddTask }) {
       setInputValue('')
    }
 
+   function getRandom(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    }
+
    const addTask = () => {
       if (!inputValue) {
          alert('Введите название задачи')
       } else {
          const taskObj = {
+            'id': getRandom(100),
             "listId": list.id,
             "text": inputValue,
-            compleated: false
+            completed: false,
          }
-         // Для 
+         // console.log(taskObj.id);
+         // Для localStorage
+         onAddTask(list.id, taskObj)
+         setAddFormVisible(!addFormVisible)
+         setInputValue('')
+         // Для сервера
          // setIsLoading(true)
          // axios
          //    .post('http://localhost:3001/tasks', taskObj).then(({ data }) => {
@@ -36,10 +46,6 @@ export default function AddTask({ list, onAddTask }) {
          //    }).finally(() => {
          //       setIsLoading(false)
          //    });
-         // Для localStorage
-         onAddTask(list.id, taskObj)
-         setAddFormVisible(!addFormVisible)
-         setInputValue('')
       }
    }
 

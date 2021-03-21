@@ -8,7 +8,7 @@ import axios from 'axios'
 
 import './AddList.scss'
 
-const AddList = ({ colors, onAdd, listLocal, arr }) => {
+const AddList = ({ colors, onAdd, listLocal, arr, items1 }) => {
    const [visiblePopup, setVisiblePopup] = useState(false);
    const [selectedColor, selectColor] = useState(3);
    const [isLoading, setIsLoading] = useState(false);
@@ -26,19 +26,39 @@ const AddList = ({ colors, onAdd, listLocal, arr }) => {
    };
 
    const addList = () =>{
+      var arr1 = JSON.parse(items1)
       if(!inputValue){
          alert('Мудила, название напиши')
          return;
-      }
+      }else if(items1){
       // Для localStorage
-      let colorsLocal = arr.colors
-      listLocal.push({
+      if(arr1.lists.length > 0){
+         listLocal.push({
+            "name": inputValue,
+            "colorId": selectedColor,
+            "id": arr1.lists[arr1.lists.length - 1].id + 1,
+            "tasks": [],
+            "color": {}
+         })
+      }else{
+         listLocal.push({
          "name": inputValue,
          "colorId": selectedColor,
-         "id": Math.random(),
+         "id": arr.lists[arr.lists.length - 1].id + 1.1,
          "tasks": [],
          "color": {}
       })
+      }
+      }else{
+      listLocal.push({
+         "name": inputValue,
+         "colorId": selectedColor,
+         "id": arr.lists.length + 1,
+         "tasks": [],
+         "color": {}
+      })
+      }
+      let colorsLocal = arr.colors
       const color = colorsLocal.filter(c => c.id === selectedColor)[0].name;
       let hex = colorsLocal.map(item =>{
          if(item.id == listLocal[listLocal.length - 1].colorId){

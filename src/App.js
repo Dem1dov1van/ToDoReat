@@ -23,21 +23,17 @@ function App() {
   const [activeItem, setActiveItem] = useState(null);
   let history = useHistory()
   let location = useLocation()
+    //Для localStorage
   var arr1 = 1
 
-  //Для localStorage
-
-  localStorage.clear()
+  // localStorage.clear()
   const items1 = localStorage.getItem('db1')
   localStorage.setItem('db',JSON.stringify(db))
   const items = localStorage.getItem('db')
   const arr = JSON.parse(items)
 
-      // Для localStorage:
-  
+  // Для localStorage:
   const embed = (lists, tasks) => {
-    // console.log(lists);
-    // console.log(tasks);
     lists.map(item => {
       item.tasks = []
       tasks.map(task => {
@@ -61,10 +57,9 @@ function App() {
       return item
     })
   }
-
   embed(arr.lists, arr.tasks)
   embedAll(arr.lists, arr.colors)
-
+  //
   useEffect(() => {
     // Для сервера:
     // axios
@@ -77,22 +72,22 @@ function App() {
     // axios.get('http://localhost:3001/colors').then(({ data }) => {
     //   setColors(data);
     // })
+    // setLists(arr.lists);
+    // setColors(arr.colors);
 
     // Для localStorage:
     if(items1){
-      var arr1 = JSON.parse(items1)
+      var arr1 =  JSON.parse(items1)
       embed(arr1.lists, arr1.tasks)
       embedAll(arr1.lists, arr1.colors)
       setLists(arr1.lists);
+      // console.log(arr1);
       setColors(arr.colors);
-      return arr1
+      // return arr1
     }else{
-        // Для сервера:
         setLists(arr.lists);
         setColors(arr.colors);
     }
-    // setLists(arr.lists);
-    // setColors(arr.colors);
   }, []);
 
 
@@ -104,20 +99,26 @@ function App() {
     localStorage.setItem('db1',JSON.stringify(db1))
     setLists(newLists);
   }
-
   const onAddTask = (listId, taskObj) => {
+    //Для localStorage
     if(items1){
       arr1 = JSON.parse(items1)
+      let newTask = {
+        'id': taskObj.id,
+        'listId':listId,
+        'text':taskObj.text,
+        completed: false 
+      }
+      arr1.tasks.push(newTask)
       const newList = arr1.lists.map(item => {
         if (item.id === listId) {
-          console.log(item)
-          console.log(taskObj)
+          console.log(arr1.lists)
+          // console.log(arr1.tasks)
           item.tasks = [...item.tasks, taskObj]
-          console.log(item.tasks)
         }
         return item;
       });
-      let db1 = {'lists': newList, 'tasks': arr.tasks, 'colors': arr.colors}
+      let db1 = {'lists': newList, 'tasks': arr1.tasks, 'colors': arr.colors}
       localStorage.setItem('db1',JSON.stringify(db1))
       setLists(newList);
     }else{
@@ -127,36 +128,96 @@ function App() {
         }
         return item;
       });
-      // setLists(newList);
+      setLists(newList)
+      const newTask = [...arr.tasks, taskObj]
+      let db1 = {'lists': newList, 'tasks': newTask, 'colors': arr.colors}
+      localStorage.setItem('db1', JSON.stringify(db1))
     }
+    //Для сервера
+    // const newList = lists.map(item => {
+    //   if (item.id === listId) {
+    //     item.tasks = [...item.tasks, taskObj]
+    //     console.log(item);
+    //   }
+    //   return item;
+    // });
+    // setLists(newList);
   }
-
   const onEditListTitle = (id, title) => {
-    const newLists = lists.map(item => {
-      if (item.id === id) {
-        item.name = title
-      }
-      return item;
-    });
-    setLists(newLists);
-  }
-
-  const onRemoveTask = (listId, taskId) => {
-    if (window.confirm('Вы дайствительно хотите удалить задачу?')) {
-      const newLists = lists.map(item => {
-        if (item.id === listId) {
-          item.tasks = item.tasks.filter(task => task.id !== taskId)
+    if(items1){
+      arr1 = JSON.parse(items1)
+      const newLists = arr1.lists.map(item => {
+          if (item.id === id) {
+            item.name = title
+          }
+          return item;
+        });
+        setLists(newLists)
+        let db1 = {'lists': newLists, 'tasks': arr1.tasks, 'colors': arr.colors}
+        localStorage.setItem('db1',JSON.stringify(db1))
+    }else{
+      console.log('555');
+      const newLists = arr.lists.map(item => {
+        if (item.id === id) {
+          console.log(id, title);
+          item.name = title
         }
         return item;
       });
+      setLists(newLists)
+      let db1 = {'lists': newLists, 'tasks': arr.tasks, 'colors': arr.colors}
+      localStorage.setItem('db1',JSON.stringify(db1))
+    }
+        // Для сервера
+    // const newLists = lists.map(item => {
+    //   if (item.id === id) {
+    //     item.name = title
+    //   }
+    //   return item;
+    // });
+    // setLists(newLists);
+  }
+  const onRemoveTask = (listId, taskId) => {
+    if (window.confirm('Вы дайствительно хотите удалить задачу?')) {
+      if(items1){
+        arr1 = JSON.parse(items1)
+      const newTasks = arr1.tasks.filter(item => item.id !== taskId)
+      const newLists = arr1.lists.map(item => {
+        if (item.id === listId) {
+          item.tasks = item.tasks.filter(task => task.id !== taskId )
+        }
+        return item;
+      });
+      let db1 = {'lists': newLists, 'tasks': newTasks, 'colors': arr.colors}
+      localStorage.setItem('db1',JSON.stringify(db1))
       setLists(newLists);
-      axios
-        .delete('http://localhost:3001/tasks/' + taskId, {
+      }else{
+        const newTasks = arr.tasks.filter(item => item.id !== taskId)
+      const newLists = arr.lists.map(item => {
+        if (item.id === listId) {
+          item.tasks = item.tasks.filter(task => task.id !== taskId )
+        }
+        return item;
+      });
+      let db1 = {'lists': newLists, 'tasks': newTasks, 'colors': arr.colors}
+      localStorage.setItem('db1',JSON.stringify(db1))
+      setLists(newLists)
+      }
 
-        })
-        .catch(() => {
-          alert('Не удалось удалить задачу')
-        });
+      // Для сервера
+      // const newLists = lists.map(item => {
+      //   if (item.id === listId) {
+      //     item.tasks = item.tasks.filter(task => task.id !== taskId)
+      //   }
+      //   return item;
+      // });
+      // axios
+      //   .delete('http://localhost:3001/tasks/' + taskId, {
+
+      //   })
+      //   .catch(() => {
+      //     alert('Не удалось удалить задачу')
+      //   });
     }
   }
   const onEditTask = (listId, taskObj) => {
@@ -165,48 +226,116 @@ function App() {
     if (!newTaskText) {
       return;
     }
-    const newList = lists.map(list => {
-      if (list.id === listId) {
-        list.tasks = list.tasks.map(item => {
-          if (item.id === taskObj.id) {
-            item.text = newTaskText
-          }
-          return item
-        })
-      }
-      return list
-    })
-    setLists(newList)
-    axios
-      .patch('http://localhost:3001/tasks/' + taskObj.id, {
-        text: newTaskText
+    if(items1){
+      arr1 = JSON.parse(items1)
+      const newList = arr1.lists.map(list => {
+        if (list.id === listId) {
+          list.tasks = list.tasks.map(item => {
+            if (item.id === taskObj.id) {
+              item.text = newTaskText
+            }
+            return item
+          })
+        }
+        return list
       })
-      .catch(() => {
-        alert('Не удалось обновить текст задачи')
-      });
+      const newTask = arr1.tasks.map(item => {
+        if(item.id == taskObj.id){
+          item.text = newTaskText
+        }
+      })
+      const newTasks = [...arr1.tasks, newTask]
+      setLists(newList)
+      let db1 = {'lists': newList, 'tasks': newTasks, 'colors': arr.colors}
+      localStorage.setItem('db1', JSON.stringify(db1))
+    }else{
+      const newList = lists.map(list => {
+        if (list.id === listId) {
+          list.tasks = list.tasks.map(item => {
+            if (item.id === taskObj.id) {
+              item.text = newTaskText
+            }
+            return item
+          })
+        }
+        return list
+      })
+      const newTask = arr.tasks.map(item => {
+        if(item.id == taskObj.id){
+          item.text = newTaskText
+        }
+      })
+      const newTasks = [...arr.tasks, newTask]
+      setLists(newList)
+      let db1 = {'lists': newList, 'tasks': newTasks, 'colors': arr.colors}
+      localStorage.setItem('db1', JSON.stringify(db1))
+    }
+    // Для сервера
+    // axios
+    //   .patch('http://localhost:3001/tasks/' + taskObj.id, {
+    //     text: newTaskText
+    //   })
+    //   .catch(() => {
+    //     alert('Не удалось обновить текст задачи')
+    //   });
   }
   const onCompleteTask = (listId, taskId, completed) => {
-    const newList = lists.map(list => {
-      if (list.id === listId) {
-        list.tasks = list.tasks.map(item => {
-          if (item.id === taskId) {
-            item.completed = completed
-          }
-          return item
-        })
-      }
-      return list
-    })
-    setLists(newList)
-    axios
-      .patch('http://localhost:3001/tasks/' + taskId, {
-        completed
+    if(items1){
+      arr1 = JSON.parse(items1)
+      const newList = arr1.lists.map(list => {
+        if (list.id === listId) {
+          list.tasks = list.tasks.map(item => {
+            if (item.id === taskId) {
+              item.completed = completed
+            }
+            return item
+          })
+        }
+        return list
       })
-      .catch(() => {
-        alert('Не удалось обновить задачу')
-      });
-  }
+      setLists(newList)
+    const newTask = arr1.tasks.map(task =>{
+      if(task.id == taskId){
+        task.completed = completed
+      }
+      return task
+    })
+    let db1 = {'lists': newList, 'tasks': newTask, 'colors': arr.colors}
+    localStorage.setItem('db1', JSON.stringify(db1))
+    }else{
+      const newList = lists.map(list => {
+        if (list.id === listId) {
+          list.tasks = list.tasks.map(item => {
+            if (item.id === taskId) {
+              item.completed = completed
+            }
+            return item
+          })
+        }
+        return list
+      })
+      setLists(newList)
+      const newTask = arr.tasks.map(task =>{
+        if(task.id == taskId){
+          task.completed = completed
+        }
+        return task
+      })
+      let db1 = {'lists': newList, 'tasks': newTask, 'colors': arr.colors}
+      localStorage.setItem('db1', JSON.stringify(db1))
+    }
+    
 
+    
+    
+    // axios
+    //   .patch('http://localhost:3001/tasks/' + taskId, {
+    //     completed
+    //   })
+    //   .catch(() => {
+    //     alert('Не удалось обновить задачу')
+    //   });
+  }
   useEffect(() => {
     const listId = location.pathname.split('/lists/')[1]
     if (lists) {
@@ -232,7 +361,6 @@ function App() {
         }}
       />
       {lists ? (
-        
         <List
           items={lists}
           onRemove={id => {
@@ -246,6 +374,9 @@ function App() {
             }else{
               const newLists = arr.lists.filter(item => item.id !== id)
               setLists(newLists)
+              // const newLists = [...lists, obj];
+              let db1 = {'lists': newLists, 'tasks': arr.tasks, 'colors': arr.colors}
+              localStorage.setItem('db1',JSON.stringify(db1))
             }
             //Для сервера
             // const newLists = lists.filter(item => item.id !== id);
@@ -262,6 +393,7 @@ function App() {
         )}
       <AddList
       // Для localStorage
+        items1 = {items1}
         arr = {arr}
         listLocal={arr.lists}
         // Для Сервера
@@ -272,10 +404,13 @@ function App() {
     </div>
     <div className="todo__tasks">
       <Route exact path='/'>
-        {lists &&
-          lists.map(list => (
+        {
+        // Для localStorage
+        items1? (
+          arr1 = JSON.parse(items1),
+          arr1.lists.map((list, i) => (
             <Tasks
-              key={list.id}
+              key={i}
               list={list}
               onEditTitle={onEditListTitle}
               onAddTask={onAddTask}
@@ -283,8 +418,40 @@ function App() {
               onEditTask={onEditTask}
               onCompleteTask={onCompleteTask}
               withoutEmpty
+              //Для localStorage
+              items1 = {items1}
+              arr = {arr}
             />
-          ))
+          ))):(arr.lists &&
+            arr.lists.map((list, i) => (
+              <Tasks
+                key={i}
+                list={list}
+                onEditTitle={onEditListTitle}
+                onAddTask={onAddTask}
+                onRemoveTask={onRemoveTask}
+                onEditTask={onEditTask}
+                onCompleteTask={onCompleteTask}
+                withoutEmpty
+                items1 = {items1}
+                arr = {arr}
+              />
+            )))
+          //Для сервера
+        //  {lists &&
+        //   lists.map(list => (
+        //     <Tasks
+        //       key={list.id}
+        //       list={list}
+        //       onEditTitle={onEditListTitle}
+        //       onAddTask={onAddTask}
+        //       onRemoveTask={onRemoveTask}
+        //       onEditTask={onEditTask}
+        //       onCompleteTask={onCompleteTask}
+        //       withoutEmpty
+        //     />
+        //   ))
+        // } 
         }
       </Route>
       <Route path='/lists/:id'>
@@ -296,6 +463,8 @@ function App() {
             onRemoveTask={onRemoveTask}
             onEditTask={onEditTask}
             onCompleteTask={onCompleteTask}
+            items1 = {items1}
+            arr = {arr}
           />
         )}
       </Route>
